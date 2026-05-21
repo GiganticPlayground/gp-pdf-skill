@@ -45,6 +45,12 @@ ls -la ~/.claude/skills/gp-pdf/SKILL.md   # should print the file via the symlin
 
 Type `/gp-pdf` and Claude will render the markdown file in your working directory.
 
+You can also pass a specific file name:
+
+```
+/gp-pdf path/to/document.md
+```
+
 ### From the shell
 
 ```bash
