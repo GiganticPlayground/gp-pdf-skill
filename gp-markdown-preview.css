@@ -65,6 +65,14 @@
   src: url("inter-latin-regular.woff2") format('woff2');
 }
 
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("inter-latin-600.woff2") format('woff2');
+}
+
 /* =========================================================================
    Page
    ========================================================================= */
@@ -312,9 +320,14 @@ blockquote p {
    ========================================================================= */
 
 hr {
-  border: none;
-  border-top: 1px solid #cccccc;
-  margin: 1.5em 0;
+  /* !important required because VS Code's bundled markdown-preview CSS
+     ships its own `hr` rule that sets `border: 0; background-color:
+     var(--vscode-textSeparator-foreground)` and otherwise hides our line. */
+  border: none !important;
+  border-top: 1px solid #cccccc !important;
+  background-color: transparent !important;
+  height: 0 !important;
+  margin: 1.5em 0 !important;
 }
 
 /* =========================================================================
