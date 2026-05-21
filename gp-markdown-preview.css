@@ -265,7 +265,7 @@ tbody td {
 }
 
 tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05) !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 /* =========================================================================
