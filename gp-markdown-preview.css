@@ -242,25 +242,30 @@ table {
   margin: 1em 0 1.4em;
 }
 
+/* !important on borders and zebra-stripe background because VS Code's
+   bundled markdown-preview CSS sets cell borders to a theme variable
+   that renders invisible against white, and applies its own zebra rule
+   that can mask ours. The PDF doesn't have that problem, but applying
+   !important uniformly keeps the two renderers in sync. */
 thead th {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
   text-align: left;
   padding: 10px 14px;
-  border: 1.5px solid #333333;
+  border: 1.5px solid #333333 !important;
   background-color: transparent;
   color: #1d1c1d;
 }
 
 tbody td {
   padding: 10px 14px;
-  border: 1.5px solid #333333;
+  border: 1.5px solid #333333 !important;
   vertical-align: top;
   color: #1d1c1d;
 }
 
 tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
 /* =========================================================================
