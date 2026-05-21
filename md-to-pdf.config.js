@@ -31,20 +31,36 @@ const LOGO_PATH = path.join(SKILL_DIR, "gp-logo.png");
 const FONT_PATH = path.join(SKILL_DIR, "inter-latin-regular.woff2");
 const CSS_PATH = path.join(SKILL_DIR, "gp-markdown-preview.css");
 
-// Read the CSS template and rewrite every relative asset URL to an absolute
-// file:// URI. md-to-pdf inlines the CSS into a temp-rendered page, so the
-// relative URLs in the source CSS wouldn't otherwise resolve to anything.
+const MIME_BY_EXT = {
+  png: "image/png",
+  woff2: "font/woff2",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  svg: "image/svg+xml",
+};
+
+// Read the CSS template and replace every relative asset URL with an inline
+// base64 data URI. We can't use file:// here because Puppeteer's Chromium
+// silently refuses to load @font-face woff2 files from file:// URLs across
+// directories (a security-restriction quirk that falls back to system fonts
+// without any error). Embedding the bytes directly bypasses that and gets us
+// Inter + Poppins in the rendered PDF.
 const cssTemplate = fs.readFileSync(CSS_PATH, "utf8");
 const css = cssTemplate.replace(
-  /url\("([^"]+\.(?:png|woff2))"\)/g,
-  (_, filename) => `url("file://${path.join(SKILL_DIR, filename)}")`
+  /url\("([^"]+\.(?:png|woff2|jpg|jpeg|svg))"\)/g,
+  (_, filename) => {
+    const ext = filename.split(".").pop().toLowerCase();
+    const mime = MIME_BY_EXT[ext] || "application/octet-stream";
+    const bytes = fs.readFileSync(path.join(SKILL_DIR, filename));
+    return `url("data:${mime};base64,${bytes.toString("base64")}")`;
+  }
 );
 
-// Read the logo and font as base64 for places that *can't* use file:// URLs:
-//   - The JS-injected header below needs the logo inline since it's built
-//     by client-side script that may run after the file context is gone.
-//   - Puppeteer's footer template renders in an isolated document context
-//     and can't load external resources, so the font goes inline there too.
+// Read the logo and font as base64 for the JS-injected header (which can't
+// see the CSS at all because it's built client-side) and the footer template
+// (which renders in an isolated document context and can't load external
+// resources). These could be teased out of the CSS we just built, but reading
+// the source files directly is simpler.
 const LOGO_DATA_URI = `data:image/png;base64,${fs.readFileSync(LOGO_PATH).toString("base64")}`;
 const FOOTER_FONT_DATA_URI = `data:font/woff2;base64,${fs.readFileSync(FONT_PATH).toString("base64")}`;
 
