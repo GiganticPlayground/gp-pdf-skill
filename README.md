@@ -13,6 +13,7 @@ Fully offline once installed — no network calls at build time.
 |------|---------|
 | `SKILL.md` | Claude Code skill manifest (frontmatter + docs). |
 | `build-pdf.sh` | Generic build script: `./build-pdf.sh <input.md> [output.pdf]`. |
+| `package-skill.sh` | Packages the skill into `gp-pdf.zip` for upload to claude.ai team/org skills. |
 | `md-to-pdf.config.js` | Configures md-to-pdf (header injection, footer template, embedded font). |
 | `gp-markdown-preview.css` | Document styling. Also usable for VS Code Markdown preview via the GitHub Pages URL. |
 | `gp-logo.png` | GP wordmark. |
@@ -60,6 +61,17 @@ You can also pass a specific file name:
 ~/.claude/skills/gp-pdf/build-pdf.sh path/to/document.md path/to/custom-name.pdf
 # Writes to the specified output path.
 ```
+
+## Upload to claude.ai (team / org skills)
+
+To make this skill available to your team or org at [claude.ai](https://claude.ai):
+
+```bash
+./package-skill.sh
+# Creates gp-pdf.zip in this directory.
+```
+
+Then go to **claude.ai → Skills → Upload skill** and drop in `gp-pdf.zip`. The zip is structured per [Anthropic's custom-skills guide](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills): a single top-level `gp-pdf/` folder containing `SKILL.md` and the supporting assets.
 
 ## Use the styling in VS Code's Markdown preview
 
