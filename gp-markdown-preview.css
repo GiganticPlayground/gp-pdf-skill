@@ -19,6 +19,14 @@
    ========================================================================= */
 
 @font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("jetbrains-mono-latin-regular.woff2") format('woff2');
+}
+
+@font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 600;
@@ -252,12 +260,17 @@ tbody tr:nth-child(even) {
    ========================================================================= */
 
 code {
-  font-family: "SF Mono", "Fira Code", "Cascadia Code", Menlo, monospace;
+  /* !important on font-family, font-size, padding, and border because
+     md-to-pdf's bundled default stylesheet ships a higher-specificity rule
+     (`h1 code, h2 code, ..., p code, li code, pre code`) that would otherwise
+     override these properties and make the chips visibly oversized. */
+  font-family: "JetBrains Mono", "SF Mono", "Fira Code", "Cascadia Code", Menlo, monospace !important;
   background-color: #f0eae8 !important;
   color: #1d1c1d !important;
+  border: none !important;
   border-radius: 4px;
-  padding: 1px 5px;
-  font-size: 0.78em;
+  padding: 1px 5px !important;
+  font-size: 0.78em !important;
 }
 
 pre {
