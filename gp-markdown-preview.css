@@ -169,7 +169,7 @@ p {
 }
 
 strong {
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 600;
   color: #1d1c1d;
 }
@@ -180,7 +180,7 @@ em {
 }
 
 a {
-  color: #141224 !important;
+  color: #1d1c1d !important;
   text-decoration: underline;
 }
 
@@ -256,8 +256,8 @@ code {
   background-color: #f0eae8 !important;
   color: #1d1c1d !important;
   border-radius: 4px;
-  padding: 2px 6px;
-  font-size: 0.88em;
+  padding: 1px 5px;
+  font-size: 0.78em;
 }
 
 pre {
