@@ -1,11 +1,13 @@
 ---
 name: gp-pdf
-description: Render any Markdown file into a Gigantic Playground branded PDF (GP logo + URL header, page numbers + copyright footer, Inter/Poppins typography, Letter size). Use whenever the user asks to produce a GP-branded PDF from a .md file, e.g. an SOW, internal doc, or proposal. Also use when the user asks to update or rebuild an existing GP PDF after edits to its source markdown.
+description: Render any Markdown or plain-text file into a Gigantic Playground branded PDF (GP logo + URL header, page numbers + copyright footer, Inter/Poppins typography, Letter size). Accepts .md, .markdown, and .txt input. Use whenever the user asks to produce a GP-branded PDF from a .md or .txt file, e.g. an SOW, internal doc, or proposal. Also use when the user asks to update or rebuild an existing GP PDF after edits to its source.
 ---
 
 # gp-pdf — Gigantic Playground branded PDF from Markdown
 
-This skill turns a Markdown file into a PDF styled to match GP's document template:
+This skill turns a Markdown (`.md`, `.markdown`) or plain-text (`.txt`) file into a PDF styled to match GP's document template. Plain-text files are rendered as Markdown, so any Markdown syntax they contain is still formatted.
+
+The output:
 
 - **Header (top of every page):** GP logo on the left, `giganticplayground.com` and "Experience Design + Creative Technology" tagline on the right. The URL is a clickable link in the rendered PDF.
 - **Footer (bottom of every page):** "© 2026 Gigantic Playground. Confidential & Proprietary." on the left, "Page X of Y" on the right.
@@ -24,7 +26,7 @@ This skill turns a Markdown file into a PDF styled to match GP's document templa
 | `poppins-latin-700.woff2` | Poppins Bold 700, Latin subset (H2) |
 | `poppins-latin-800.woff2` | Poppins ExtraBold 800, Latin subset (H1) |
 | `md-to-pdf.config.js` | Configures md-to-pdf with header injection, footer template, embedded font, etc. |
-| `build-pdf.sh` | Generic build script. Takes any .md file and produces a sibling .pdf. |
+| `build-pdf.sh` | Generic build script. Takes any .md, .markdown, or .txt file and produces a sibling .pdf. |
 
 ## Usage
 
@@ -33,6 +35,7 @@ This skill turns a Markdown file into a PDF styled to match GP's document templa
 ```bash
 ~/.claude/skills/gp-pdf/build-pdf.sh path/to/document.md
 # Writes path/to/document.pdf alongside the input.
+# Also accepts .markdown and .txt input (e.g. path/to/notes.txt → path/to/notes.pdf).
 
 ~/.claude/skills/gp-pdf/build-pdf.sh path/to/document.md path/to/custom-name.pdf
 # Writes to the specified output path.
@@ -45,9 +48,9 @@ The user typically asks:
 - "Build / rebuild the PDF"
 - "Regenerate the PDF"
 
-Run the `build-pdf.sh` script in the skill directory, passing the user's `.md` file as the first argument.
+Run the `build-pdf.sh` script in the skill directory, passing the user's `.md`, `.markdown`, or `.txt` file as the first argument.
 
-If multiple `.md` files exist in the working directory and the user hasn't named one explicitly, ask which file to render before running.
+If multiple source files exist in the working directory and the user hasn't named one explicitly, ask which file to render before running.
 
 ## Tunables (top of `md-to-pdf.config.js`)
 
@@ -64,8 +67,8 @@ If multiple `.md` files exist in the working directory and the user hasn't named
 
 - The build script uses `npx --yes md-to-pdf`. First run on a fresh machine takes a minute or two while npm fetches md-to-pdf and Puppeteer; subsequent runs are quick (~3-5 seconds).
 - All fonts and the logo are local files. No Google Fonts or other external resources are loaded at build time — the skill is fully offline-capable.
-- The CSS uses relative URLs (`url("gp-logo.png")`, `url("inter-latin-regular.woff2")`, `url("poppins-latin-700.woff2")`, etc.) so the same file works in VS Code Markdown preview. The config rewrites those URLs to absolute `file://` paths at PDF-build time so md-to-pdf can resolve them regardless of where the input `.md` lives.
-- The Inter font is also inlined as base64 inside the footer template because Puppeteer's footer document context is isolated and can't fetch external resources.
+- The CSS uses relative URLs (`url("gp-logo.png")`, `url("inter-latin-regular.woff2")`, `url("poppins-latin-700.woff2")`, etc.) so the same file works in VS Code Markdown preview. At PDF-build time, the config reads each referenced asset from this skill directory and inlines its bytes as a `data:` URI directly into the CSS string handed to md-to-pdf. We do this (rather than rewriting URLs to absolute `file://` paths) because Puppeteer's Chromium silently refuses to load `@font-face` woff2 files from `file://` URLs across directories, falling back to system fonts without any error. Inlining the bytes guarantees the fonts actually load.
+- The Inter font is also inlined as base64 inside the footer template because Puppeteer's footer document context is isolated and can't load external resources.
 
 ## Updating the brand assets
 
@@ -73,4 +76,4 @@ To swap the logo or any font: drop the new file into this skill directory with t
 
 To change the URL, tagline, footer copyright, or color palette: edit `gp-markdown-preview.css` (for the header) and `md-to-pdf.config.js` (for the `CLICKABLE_HEADER_URL` script and footer template).
 
-To add more weights (e.g., Poppins Regular 400 or Italic): download the woff2 from Google Fonts (Latin subset), drop it into this skill directory, and add a matching `@font-face` block in `gp-markdown-preview.css`. The config will automatically rewrite the relative URL to an absolute `file://` path at build time.
+To add more weights (e.g., Poppins Regular 400 or Italic): download the woff2 from Google Fonts (Latin subset), drop it into this skill directory, and add a matching `@font-face` block in `gp-markdown-preview.css`. The config will automatically inline the new file's bytes as a `data:` URI at build time — no further code changes needed.

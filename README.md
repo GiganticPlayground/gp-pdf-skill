@@ -1,6 +1,6 @@
 # gp-pdf-skill
 
-A [Claude Code](https://docs.claude.com/en/docs/claude-code) skill that renders any Markdown file into a **Gigantic Playground branded PDF**.
+A [Claude Code](https://docs.claude.com/en/docs/claude-code) skill that renders any Markdown or plain-text file (`.md`, `.markdown`, `.txt`) into a **Gigantic Playground branded PDF**.
 
 Header: GP logo + `giganticplayground.com` + tagline.
 Footer: copyright + page numbers.
@@ -12,7 +12,7 @@ Fully offline once installed — no network calls at build time.
 | File | Purpose |
 |------|---------|
 | `SKILL.md` | Claude Code skill manifest (frontmatter + docs). |
-| `build-pdf.sh` | Generic build script: `./build-pdf.sh <input.md> [output.pdf]`. |
+| `build-pdf.sh` | Generic build script: `./build-pdf.sh <input.md\|.markdown\|.txt> [output.pdf]`. |
 | `package-skill.sh` | Packages the skill into `gp-pdf.zip` for upload to claude.ai team/org skills. |
 | `md-to-pdf.config.js` | Configures md-to-pdf (header injection, footer template, embedded font). |
 | `gp-markdown-preview.css` | Document styling. Also usable for VS Code Markdown preview via the GitHub Pages URL. |
@@ -107,7 +107,7 @@ If the preview ever caches a stale version, append `?v=N` to the URL to bust the
 2. `git add . && git commit -m "..." && git push`
 3. VS Code preview picks up the change within ~1 minute (GitHub Pages CDN cache). PDF builds pick it up immediately.
 
-To add a new font weight or family: drop the new `.woff2` into this directory and add a matching `@font-face` block in `gp-markdown-preview.css`. The `md-to-pdf.config.js` URL rewriter automatically handles any `url("*.woff2")` reference at build time.
+To add a new font weight or family: drop the new `.woff2` into this directory and add a matching `@font-face` block in `gp-markdown-preview.css`. At build time, `md-to-pdf.config.js` reads each referenced asset and inlines its bytes as a `data:` URI into the CSS, so any `url("*.woff2")` reference is handled automatically.
 
 ## Requirements
 
